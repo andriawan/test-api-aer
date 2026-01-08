@@ -34,5 +34,10 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'ceklaporan' => [
+        'partner_id' => env('CEKLAPORAN_PARTNER_ID'),
+        'api_key'    => env('CEKLAPORAN_API_KEY'),
+        'secret_key' => env('CEKLAPORAN_SECRET_KEY'),
+    ],
 
 ];
