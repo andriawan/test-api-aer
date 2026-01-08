@@ -117,6 +117,13 @@
 
             </tbody>
         </table>
+        @if ($transaction['transaction_status'] !== '00')
+            <div class="mt-6 text-center">
+                <a href="{{ url('/payments/view/' . $transaction['ref_id']) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+                    Check Status Pembayaran
+                </a>
+            </div>
+        @endif
     </div>
 
 </div>

@@ -37,13 +37,6 @@ class CekLaporanQrService
 
         $signature = $this->generateSignature($payload, $timestamp);
 
-        \Log::info('CekLaporan Qr Payload:', $payload);
-        \Log::info('CekLaporan Qr Signature:', [
-            'signature' => $signature,
-            'timestamp' => $timestamp,
-            'apiKey'    => $this->apiKey,
-        ]);
-
         $response = Http::withHeaders([
             'Apikey'      => $this->apiKey,
             'X-Signature' => $signature,
@@ -92,9 +85,6 @@ class CekLaporanQrService
     protected function generateSignature(array $payload, string $timestamp): string
     {
         $body = json_encode($payload, JSON_UNESCAPED_SLASHES);
-
-        \Log::info('CekLaporan Qr Signature Body:', ['body' => $body, 'timestamp' => $timestamp]);
-
         return hash_hmac(
             'sha256',
             $body . $timestamp,

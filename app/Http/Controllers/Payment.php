@@ -67,9 +67,14 @@ class Payment extends Controller
 
     public function viewPaymentByRefId(Request $request)
     {
+        $qrInfo = [
+            'data' => null
+        ];
         $refId = $request->route('ref_id');
         $payment = PaymentHistory::where('ref_id', $refId)->firstOrFail();
-        $qrInfo = $this->qrService->getQrInfo($payment);
+        if($payment->transaction_status !== '00') {
+            $qrInfo = $this->qrService->getQrInfo($payment);
+        }
         if(isset($qrInfo['data'])) {
             $payment->update([
                 'transaction_status' => $qrInfo['data']['transaction_status'] ?? null,
