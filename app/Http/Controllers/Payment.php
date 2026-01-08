@@ -29,7 +29,10 @@ class Payment extends Controller
             $amount = $data['amount'];
             $expiredAt = now('Asia/Jakarta')->addMinutes(15);
             $qrResponse = $this->qrService->generateQr($refId, $amount, $expiredAt);
-            \Log::info('Generated QR Code:', $qrResponse);
+            if(!$qrResponse['status']) {
+                \Log::error('QR Code Generation Failed:', $qrResponse);
+                throw new \Exception('Failed to generate QR code: please contact support');
+            }
             $qrResponse = $qrResponse['data'];
             PaymentHistory::create([
                 'ref_id'     => $qrResponse['refid'],
@@ -41,16 +44,8 @@ class Payment extends Controller
             ]);
             return \redirect()->route('payment.view.single', ['ref_id' => $refId]);
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to generate QR code: ' . $e->getMessage(),
-            ], 500);
+            return redirect()->back()->withErrors(['error' => 'Payment processing failed: ' . $e->getMessage()]);
         }
-
-        return response()->json([
-            'status' => 'success',
-            'qr_data' => $qrResponse,
-        ]);
     }
 
     public function getAllPayments()
@@ -87,14 +82,14 @@ class Payment extends Controller
             ]);
         }
         
-        \Log::info('QR Info Retrieved:', $qrInfo);
+        \Log::debug('QR Info Retrieved:', $qrInfo);
         return view('payments.show', ['transaction' => $payment]);
     }
 
     public function processCallbackQr(Request $request)
     {
         $data = $request->all();
-        \Log::info('QR Callback Data:', $data);
+        \Log::debug('QR Callback Data:', $data);
 
         $payment = PaymentHistory::where('ref_id', $data['refid'])->firstOrFail();
         if ($payment) {

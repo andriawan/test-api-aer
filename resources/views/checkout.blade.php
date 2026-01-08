@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Pembayaran</title>
@@ -22,11 +23,19 @@
 
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
 
-    <form
-        method="POST"
-        action="{{ url('/process-payment') }}"
-        class="bg-white p-6 rounded-xl shadow-md w-full max-w-md space-y-4"
-    >
+    <form method="POST" action="{{ url('/process-payment') }}"
+        class="bg-white p-6 rounded-xl shadow-md w-full max-w-md space-y-4">
+        <div>
+            @if ($errors->any())
+                <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+        </div>
         @csrf
 
         <h1 class="text-xl font-semibold text-gray-800">
@@ -39,31 +48,24 @@
                 Nominal Pembayaran
             </label>
 
-            <input
-                id="amount_display"
-                type="text"
-                inputmode="numeric"
-                placeholder="Rp 0"
+            <input id="amount_display" required type="text" inputmode="numeric" placeholder="Rp 0"
                 class="mt-1 block w-full rounded-lg outline-none border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                autocomplete="off"
-            >
+                autocomplete="off">
 
             <!-- Hidden numeric input -->
             <input type="hidden" name="amount" id="amount">
         </div>
 
         <!-- Submit Button -->
-        <button
-            type="submit"
-            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition"
-        >
+        <button type="submit"
+            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition">
             Proses Pembayaran
         </button>
 
         <div>
-        <a href="{{ url('/payments/view') }}" class="text-sm text-indigo-600 hover:underline">
-            ← Lihat Daftar Transaksi
-    </div>
+            <a href="{{ url('/payments/view') }}" class="text-sm text-indigo-600 hover:underline">
+                ← Lihat Daftar Transaksi
+        </div>
 
     </form>
 
@@ -72,7 +74,7 @@
         const displayInput = document.getElementById('amount_display');
         const hiddenInput = document.getElementById('amount');
 
-        displayInput.addEventListener('input', function () {
+        displayInput.addEventListener('input', function() {
             let value = this.value.replace(/[^\d]/g, '');
 
             if (!value) {
@@ -92,4 +94,5 @@
     </script>
 
 </body>
+
 </html>
