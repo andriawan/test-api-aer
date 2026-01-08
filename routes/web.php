@@ -6,10 +6,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('/qr-callback', function () {
-    $request = Request::capture()->all();
-    \Log::info('QR Callback Data:', $request);
-});
+Route::post('/qr-callback', [App\Http\Controllers\Payment::class, 'processCallbackQr']);
 
 Route::get('/checkout', function () {
     return view('checkout');

@@ -44,7 +44,7 @@
                 type="text"
                 inputmode="numeric"
                 placeholder="Rp 0"
-                class="mt-1 block w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                class="mt-1 block w-full rounded-lg outline-none border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
                 autocomplete="off"
             >
 
@@ -59,6 +59,11 @@
         >
             Proses Pembayaran
         </button>
+
+        <div>
+        <a href="{{ url('/payments/view') }}" class="text-sm text-indigo-600 hover:underline">
+            ← Lihat Daftar Transaksi
+    </div>
 
     </form>
 

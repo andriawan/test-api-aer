@@ -13,10 +13,13 @@
 
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
 
-        <div class="p-4 border-b">
+        <div class="p-4 border-b flex items-center justify-between">
             <h1 class="text-lg font-semibold text-gray-800">
                 Daftar Transaksi
             </h1>
+            <a href="{{ url('/checkout') }}" class="text-sm text-indigo-600 hover:underline">
+                + Buat Transaksi Baru
+            </a>
         </div>
 
         <div class="overflow-x-auto">
@@ -59,7 +62,7 @@
                             </td>
 
                             <td>
-                                @if ($trx['transaction_status'] === 'completed')
+                                @if ($trx['transaction_status'] === '00')
                                     <span class="px-2 py-1 rounded bg-green-100 text-green-800 text-xs font-medium">
                                         Selesai
                                     </span>

@@ -68,7 +68,7 @@
                 <tr>
                     <th class="py-3 text-left font-medium text-gray-600">Status</th>
                     <td class="py-3 capitalize">
-                        @if ($transaction['transaction_status'] === 'completed')
+                        @if ($transaction['transaction_status'] === '00')
                             <span class="px-2 py-1 rounded bg-green-100 text-green-800 text-xs font-medium">
                                 Selesai
                             </span>
@@ -82,6 +82,22 @@
                             </span>
                         @endif
                     </td>
+                </tr>
+
+                <tr>
+                    <th class="py-3 text-left font-medium text-gray-600">Brand </th>
+                    <td class="py-3">
+                        {{ $transaction['brand_name'] ?? "-" }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th class="py-3 text-left font-medium text-gray-600">Buyer </th>
+                    <td class="py-3">
+                        {{ $transaction['buyer_ref'] ?? "-" }}
+                    </td>
+                </tr>
+
 
                 <tr>
                     <th class="py-3 text-left font-medium text-gray-600">Expired At</th>
@@ -93,7 +109,9 @@
                 <tr>
                     <th class="py-3 text-left font-medium text-gray-600">Created At</th>
                     <td class="py-3">
-                        {{ \Carbon\Carbon::parse($transaction['created_at'])->format('d M Y H:i') }}
+                        {{ \Carbon\Carbon::parse($transaction['created_at'])
+                            ->setTimezone('Asia/Jakarta')
+                            ->format('d M Y H:i') }}
                     </td>
                 </tr>
 

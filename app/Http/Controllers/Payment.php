@@ -70,16 +70,41 @@ class Payment extends Controller
         $refId = $request->route('ref_id');
         $payment = PaymentHistory::where('ref_id', $refId)->firstOrFail();
         $qrInfo = $this->qrService->getQrInfo($payment);
-        $payment->update([
-            'transaction_status' => $qrInfo['data']['transaction_status'] ?? null,
-            'transaction_desc'   => $qrInfo['data']['transaction_desc'] ?? null,
-            'brand_name'         => $qrInfo['data']['brand_name'] ?? null,
-            'buyer_ref'          => $qrInfo['data']['buyer_ref'] ?? null,
-            'status'             => strtolower($qrInfo['data']['transaction_status'] ?? 'pending'),
-            'trx_date'           => isset($qrInfo['data']['trx_date']) ? 
-                                    \Carbon\Carbon::parse($qrInfo['data']['trx_date']) : null,
-        ]);
+        if(isset($qrInfo['data'])) {
+            $payment->update([
+                'transaction_status' => $qrInfo['data']['transaction_status'] ?? null,
+                'transaction_desc'   => $qrInfo['data']['transaction_desc'] ?? null,
+                'brand_name'         => $qrInfo['data']['brand_name'] ?? null,
+                'buyer_ref'          => $qrInfo['data']['buyer_ref'] ?? null,
+                'status'             => strtolower($qrInfo['data']['transaction_status'] ?? 'pending'),
+                'trx_date'           => isset($qrInfo['data']['trx_date']) ? 
+                                        \Carbon\Carbon::parse($qrInfo['data']['trx_date']) : null,
+            ]);
+        }
+        
         \Log::info('QR Info Retrieved:', $qrInfo);
         return view('payments.show', ['transaction' => $payment]);
+    }
+
+    public function processCallbackQr(Request $request)
+    {
+        $data = $request->all();
+        \Log::info('QR Callback Data:', $data);
+
+        $payment = PaymentHistory::where('ref_id', $data['refid'])->firstOrFail();
+        if ($payment) {
+            $payment->update([
+                'transaction_status' => $data['transaction_status'] ?? null,
+                'transaction_desc'   => $data['transaction_desc'] ?? null,
+                'brand_name'         => $data['brand_name'] ?? null,
+                'buyer_ref'          => $data['buyer_ref'] ?? null,
+                'status'             => strtolower($data['transaction_status'] ?? 'pending'),
+                'trx_date'           => isset($data['trx_date']) ? 
+                                        \Carbon\Carbon::parse($data['trx_date']) : null,
+            ]);
+        }
+
+        return response()->json(['status' => 'success']);
+        
     }
 }
