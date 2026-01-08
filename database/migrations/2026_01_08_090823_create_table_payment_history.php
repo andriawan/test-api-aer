@@ -16,9 +16,14 @@ return new class extends Migration
             $table->string('ref_id')->unique();
             $table->string('trx_id')->unique();
             $table->string('qr_code')->nullable();
+            $table->string('transaction_status')->nullable();
+            $table->string('transaction_desc')->nullable();
+            $table->string('brand_name')->nullable();
+            $table->string('buyer_ref')->nullable();
             $table->string('status')->default('pending');
             $table->integer('amount');
             $table->timestamp('expired_at');
+            $table->timestamp('trx_date')->nullable();
             $table->timestamps();
         });
     }

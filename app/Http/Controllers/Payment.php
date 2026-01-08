@@ -27,17 +27,19 @@ class Payment extends Controller
             // Generate QR Code untuk pembayaran
             $refId = $refId = now()->format('YmdHis') . rand(100,999);
             $amount = $data['amount'];
-            $expiredAt = now()->addMinutes(15);
+            $expiredAt = now('Asia/Jakarta')->addMinutes(15);
             $qrResponse = $this->qrService->generateQr($refId, $amount, $expiredAt);
+            $qrResponse = $qrResponse['data'];
             \Log::info('Generated QR Code:', $qrResponse);
             PaymentHistory::create([
-                'ref_id'     => $refId,
-                'trx_id'     => $qrResponse['trx_id'],
+                'ref_id'     => $qrResponse['refid'],
+                'trx_id'     => $qrResponse['trxid'],
                 'qr_code'    => $qrResponse['qr_code'],
                 'amount'     => $amount,
                 'status'     => 'pending',
                 'expired_at' => $expiredAt,
             ]);
+            return \redirect()->route('payment.view.single', ['ref_id' => $refId]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -67,6 +69,17 @@ class Payment extends Controller
     {
         $refId = $request->route('ref_id');
         $payment = PaymentHistory::where('ref_id', $refId)->firstOrFail();
+        $qrInfo = $this->qrService->getQrInfo($payment);
+        $payment->update([
+            'transaction_status' => $qrInfo['data']['transaction_status'] ?? null,
+            'transaction_desc'   => $qrInfo['data']['transaction_desc'] ?? null,
+            'brand_name'         => $qrInfo['data']['brand_name'] ?? null,
+            'buyer_ref'          => $qrInfo['data']['buyer_ref'] ?? null,
+            'status'             => strtolower($qrInfo['data']['transaction_status'] ?? 'pending'),
+            'trx_date'           => isset($qrInfo['data']['trx_date']) ? 
+                                    \Carbon\Carbon::parse($qrInfo['data']['trx_date']) : null,
+        ]);
+        \Log::info('QR Info Retrieved:', $qrInfo);
         return view('payments.show', ['transaction' => $payment]);
     }
 }

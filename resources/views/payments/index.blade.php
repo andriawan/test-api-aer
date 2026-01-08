@@ -59,17 +59,17 @@
                             </td>
 
                             <td>
-                                @if ($trx['status'] === 'completed')
+                                @if ($trx['transaction_status'] === 'completed')
                                     <span class="px-2 py-1 rounded bg-green-100 text-green-800 text-xs font-medium">
                                         Selesai
                                     </span>
-                                @elseif ($trx['status'] === 'pending')
+                                @elseif ($trx['transaction_status'] === 'pending')
                                     <span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-medium">
                                         Pending
                                     </span>
                                 @else
-                                    <span class="px-2 py-1 rounded bg-red-100 text-red-800 text-xs font-medium">
-                                        Gagal
+                                    <span class="px-2 py-1 rounded bg-gray-300 text-gray-800 text-xs font-medium">
+                                        {{ $trx['transaction_status'] }} | {{ $trx['transaction_desc'] }}
                                     </span>
                                 @endif
                             </td>

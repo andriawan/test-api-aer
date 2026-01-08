@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Carbon;
+use App\Models\PaymentHistory;
 
 class CekLaporanQrService
 {
@@ -24,7 +25,7 @@ class CekLaporanQrService
         Carbon $expiredAt,
         bool $isStatic = false
     ): array {
-        $timestamp = now()->toIso8601String();
+        $timestamp = now('Asia/Jakarta')->toIso8601String();
 
         $payload = [
             'partner_id' => $this->partnerId,
@@ -42,8 +43,6 @@ class CekLaporanQrService
             'timestamp' => $timestamp,
             'apiKey'    => $this->apiKey,
         ]);
-
-
 
         $response = Http::withHeaders([
             'Apikey'      => $this->apiKey,
@@ -63,7 +62,7 @@ class CekLaporanQrService
     }
 
     public function getQrInfo(PaymentHistory $paymentHistory): array {
-        $timestamp = now()->toIso8601String();
+        $timestamp = now('Asia/Jakarta')->toIso8601String();
 
         $payload = [
             'partner_id' => $this->partnerId,
