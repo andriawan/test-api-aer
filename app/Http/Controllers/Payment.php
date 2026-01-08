@@ -29,8 +29,8 @@ class Payment extends Controller
             $amount = $data['amount'];
             $expiredAt = now('Asia/Jakarta')->addMinutes(15);
             $qrResponse = $this->qrService->generateQr($refId, $amount, $expiredAt);
-            $qrResponse = $qrResponse['data'];
             \Log::info('Generated QR Code:', $qrResponse);
+            $qrResponse = $qrResponse['data'];
             PaymentHistory::create([
                 'ref_id'     => $qrResponse['refid'],
                 'trx_id'     => $qrResponse['trxid'],
