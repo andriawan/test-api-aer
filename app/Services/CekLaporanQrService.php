@@ -37,8 +37,11 @@ class CekLaporanQrService
         $signature = $this->generateSignature($payload, $timestamp);
 
         \Log::info('CekLaporan Qr Payload:', $payload);
-        \Log::info('CekLaporan Qr Signature:', $signature);
-        \Log::info('CekLaporan Qr API Key:', $this->apiKey);
+        \Log::info('CekLaporan Qr Signature:', [
+            'signature' => $signature,
+            'timestamp' => $timestamp,
+            'apiKey'    => $this->apiKey,
+        ]);
 
 
 
