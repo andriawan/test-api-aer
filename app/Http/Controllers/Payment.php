@@ -56,7 +56,22 @@ class Payment extends Controller
 
     public function getAllPaymentsBlade()
     {
-        $payments = PaymentHistory::paginate(10);
+        $queryPayment = PaymentHistory::query();
+        $queryPayment->when(request('transaction_status'), function ($query, $status) {
+            $query->whereIn('transaction_status', explode(',', $status));
+        });
+        $queryPayment->when(request('ref_id'), function ($query, $refId) {
+            $query->whereIn('ref_id', explode(',', $refId));
+        });
+        $queryPayment->when(request('trx_id'), function ($query, $trxId) {
+            $query->whereIn('trx_id', explode(',', $trxId));
+        });
+        applyMultiNumericFilterIfValid(
+            $queryPayment,
+            'amount',
+            request('amount')
+        );
+        $payments = $queryPayment->paginate(10);
         return view('payments.index', ['transactions' => $payments]);
     }
 
