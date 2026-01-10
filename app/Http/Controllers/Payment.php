@@ -71,7 +71,7 @@ class Payment extends Controller
             'amount',
             request('amount')
         );
-        $payments = $queryPayment->paginate(10);
+        $payments = $queryPayment->paginate(10)->appends(request()->query());
         return view('payments.index', ['transactions' => $payments]);
     }
 
