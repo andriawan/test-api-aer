@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\CekLaporanQrService;
 use App\Models\PaymentHistory;
+use Inertia\Inertia;
 
 class Payment extends Controller
 {
@@ -72,7 +73,7 @@ class Payment extends Controller
             request('amount')
         );
         $payments = $queryPayment->paginate(10)->appends(request()->query());
-        return view('payments.index', ['transactions' => $payments]);
+        return Inertia::render('Payments/Index', ['transactions' => $payments]);
     }
 
     public function viewPaymentByRefId(Request $request)
@@ -82,6 +83,7 @@ class Payment extends Controller
         ];
         $refId = $request->route('ref_id');
         $payment = PaymentHistory::where('ref_id', $refId)->firstOrFail();
+        $success = false;
         if($payment->transaction_status !== '00') {
             $qrInfo = $this->qrService->getQrInfo($payment);
         }
@@ -96,9 +98,14 @@ class Payment extends Controller
                                         \Carbon\Carbon::parse($qrInfo['data']['trx_date']) : null,
             ]);
         }
+
+        if(isset($qrInfo['data']) && $qrInfo['data']['transaction_status']) {
+            $success = true;
+            session()->flash('success', $success);
+        }
         
         \Log::debug('QR Info Retrieved:', $qrInfo);
-        return view('payments.show', ['transaction' => $payment]);
+        return Inertia::render('Payments/Show', ['transaction' => $payment]);
     }
 
     public function processCallbackQr(Request $request)

@@ -2,14 +2,19 @@
 
 use Illuminate\Support\Facades\Route;
 
+use Inertia\Inertia;
+
 Route::get('/', function () {
-    return view('welcome');
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+    ]);
 });
 
 Route::post('/qr-callback', [App\Http\Controllers\Payment::class, 'processCallbackQr']);
 
 Route::get('/checkout', function () {
-    return view('checkout');
+    return Inertia::render('Checkout');
 });
 
 Route::post('/process-payment', [App\Http\Controllers\Payment::class, 'processPayment']);
